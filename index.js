@@ -44,6 +44,10 @@ for (const key of keys) {
             synth.triggerAttackRelease(key.pitch, key.duration);
         });
     }
+    // for safari 
+    document.querySelector(key.id).addEventListener('touchend', event => {
+        event.preventDefault();
+      }, false);
 }
 
 for (const triggerEventName of triggerEventNameList) {
