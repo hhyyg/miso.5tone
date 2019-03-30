@@ -34,7 +34,8 @@ const keys = [
     { id: '#b6', pitch: 'Bb6', duration: keyDuration }, 
 ];
 
-const triggerEventNameList = ['mousedown'];
+const supportTouch = 'ontouchend' in document;
+const triggerEventNameList = [(supportTouch ? 'touchstart': 'mousedown')];
 
 for (const key of keys) {
     for (const triggerEventName of triggerEventNameList) {
