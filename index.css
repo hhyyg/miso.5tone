@@ -1,0 +1,34 @@
+.key {
+    font-size: 3.4em;
+    vertical-align: middle;
+    background-color: #ffffff;
+}
+
+.key:active {
+    transform: translate3d(0, 5px, 0);
+}
+
+.control button {
+    font-size: 2em;
+}
+
+.octave {
+    display: grid;
+    grid-template-rows: 100px;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    justify-items: center;
+    align-items: center;
+}
+
+.octave:nth-child(1) {
+    margin-left:40%;
+}
+
+.octave:nth-child(2),
+.octave:nth-child(3) {
+    margin-right:40%;
+}
+
+.thanks {
+    margin-top:100px;
+}
