@@ -33,3 +33,27 @@
 .thanks {
     margin-top:100px;
 }
+
+.chord-board > div{
+    display: grid;
+    justify-items: center;
+    align-items: center;
+    grid-template-rows: 100px;
+}
+.pattern-a {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.pattern-b {
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+}
+
+.pattern-c {
+    grid-template-columns: 1fr 1fr;
+}
+
+.chord {
+    padding: 10px;
+    border-radius: 10px;
+    border: solid 1px #c0c0c0;
+}

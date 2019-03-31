@@ -1,9 +1,10 @@
-///<reference path="./node_modules/tone/build/Tone.js"/>
+///<reference path='./tone.js'/>
 
 const synth = new Tone.PolySynth(5, Tone.Synth).toMaster();
-const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
+const midiSynth = new Tone.PolySynth(6, Tone.Synth).toMaster();
+const chordSynth = new Tone.PolySynth(4, Tone.Synth).toMaster();
 
-fetch("magical.json")
+fetch('magical.json')
     .then(response => response.json())
     .then(parsed => {
         for (var i = 0; i < parsed.tracks.length; i++) {
@@ -34,6 +35,22 @@ const keys = [
     { id: '#b6', pitch: 'Bb6', duration: keyDuration }, 
 ];
 
+const chord_pattern_list = [
+    { id: '#chord-es', chord: ['Eb2', 'Gb3', 'Bb3', 'Db4' ] },
+    { id: '#chord-es2', chord: ['Eb2',  'Bb3', 'Db4', 'Gb4'] },
+    { id: '#chord-as', chord: ['Ab2', 'Gb3', 'Cb3', 'Eb4'] },
+    { id: '#chord-ces5', chord: ['Db2', 'Cb3', 'Eb4', 'Gb4'] },
+    { id: '#chord-ges9', chord: ['Gb2', 'Ab3', 'Bb3', 'Db4'] },
+
+    { id: '#chord-ges', chord: ['Gb2', 'Bb3', 'Db4', 'Gb4'] },
+    { id: '#chord-ges7', chord: ['Gb2', 'Bb3', 'Db4', 'E4'] },
+    { id: '#chord-ces9', chord: ['Cb2', 'Db4', 'Eb4', 'Gb4'] },
+    { id: '#chord-des', chord: ['Db3', 'Ab3', 'F4']},
+    { id: '#chord-b7', chord: ['Bb2', 'Db4', 'F4', 'Ab4']},
+
+    { id: '#chord-des7', chord: ['Db3', 'Cb3', 'F4', 'Ab4']},
+];
+
 const supportTouch = 'ontouchend' in document;
 const triggerEventNameList = [(supportTouch ? 'touchstart': 'mousedown')];
 
@@ -50,8 +67,16 @@ for (const key of keys) {
       }, false);
 }
 
+for (const chord_pattern of chord_pattern_list) {
+    for (const triggerEventName of triggerEventNameList) {
+        document.querySelector(chord_pattern.id).addEventListener(triggerEventName, () => {
+            chordSynth.triggerAttackRelease(chord_pattern.chord, '4n');
+        });
+    }
+}
+
 for (const triggerEventName of triggerEventNameList) {
-    document.querySelector("#start").addEventListener(triggerEventName, () => {
+    document.querySelector('#start').addEventListener(triggerEventName, () => {
         var context = new AudioContext();
 
         Tone.Transport.bpm.value = 112;
@@ -63,14 +88,14 @@ document.onkeydown = function() {
     const keyCode = event.keyCode;
 
     if (keyCode === 49) {
-        synth.triggerAttackRelease("C#4", "16n");
+        synth.triggerAttackRelease('C#4', '16n');
     } else if (keyCode === 50) {
-        synth.triggerAttackRelease("D#4", "16n");
+        synth.triggerAttackRelease('D#4', '16n');
     } else if (keyCode === 52) {
-        synth.triggerAttackRelease("F#4", "16n");
+        synth.triggerAttackRelease('F#4', '16n');
     } else if (keyCode === 53) {
-        synth.triggerAttackRelease("G#4", "16n");
+        synth.triggerAttackRelease('G#4', '16n');
     } else if (keyCode === 54) {
-        synth.triggerAttackRelease("A#4", "16n");
+        synth.triggerAttackRelease('A#4', '16n');
     }
 }
