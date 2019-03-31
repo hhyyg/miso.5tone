@@ -54,7 +54,7 @@ for (const triggerEventName of triggerEventNameList) {
     document.querySelector("#start").addEventListener(triggerEventName, () => {
         var context = new AudioContext();
 
-        Tone.Transport.bpm.value = 112;
+        Tone.Transport.bpm.value = 120;
         Tone.Transport.toggle();
     });
 }
