@@ -38,19 +38,16 @@
     display: grid;
     justify-items: center;
     align-items: center;
-    grid-template-rows: 100px;
+    grid-template-rows: 150px;
 }
 .pattern-a {
     grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
 .pattern-b {
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
 }
 
-.pattern-c {
-    grid-template-columns: 1fr 1fr;
-}
 
 .chord {
     padding: 10px;
