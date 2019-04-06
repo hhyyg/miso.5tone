@@ -1,4 +1,4 @@
-///<reference path="./node_modules/tone/build/Tone.js"/>
+///<reference path="tone.js"/>
 
 const synth = new Tone.PolySynth(5, Tone.Synth).toMaster();
 const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
@@ -52,7 +52,7 @@ for (const key of keys) {
 
 for (const triggerEventName of triggerEventNameList) {
     document.querySelector("#start").addEventListener(triggerEventName, () => {
-        var context = new AudioContext();
+        const context = new AudioContext();
 
         Tone.Transport.bpm.value = 120;
         Tone.Transport.toggle();
