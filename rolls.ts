@@ -2,7 +2,7 @@
 /// <reference path="./types/p5/index.d.ts"/>
 
 const tileSize = 20;
-const synth = new Tone.Synth().toMaster();
+const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
 
 let pressed = false;
 
@@ -47,17 +47,22 @@ const notes = [
     'D#1',
     'C#1',
 ];
+let canvasWidth;
+let canvasHeight;
 
 function setup() {
     const context = new AudioContext();
-    createCanvas(windowWidth, windowHeight);
+
+    canvasWidth = windowWidth;
+    canvasHeight = notes.length * tileSize;
+    createCanvas(canvasWidth, canvasHeight);
 
     // layer
-    layer = createGraphics(windowWidth, windowHeight);
+    layer = createGraphics(canvasWidth, canvasHeight);
     layer.clear();
     layer.colorMode(HSB, 360, 100, 100, 100);
 
-    metronomeLayer = createGraphics(windowWidth, windowHeight);
+    metronomeLayer = createGraphics(canvasWidth, canvasHeight);
     metronomeLayer.clear();
 
     // setup button
@@ -90,8 +95,8 @@ function draw() {
     _play();
 
 
-    image(layer, 0, 0, windowWidth, windowHeight);
-    image(metronomeLayer, 0, 0, windowWidth, windowHeight);
+    image(layer, 0, 0, canvasWidth, canvasHeight);
+    image(metronomeLayer, 0, 0, canvasWidth, canvasHeight);
 }
 
 function _drawTile() {
@@ -159,17 +164,17 @@ function _play() {
     metronomeLayer.clear();
     metronomeLayer.noStroke();
     metronomeLayer.fill(140, 140, 140, 30);
-    metronomeLayer.rect(beatCount * tileSize, 0, tileSize, windowHeight);
+    metronomeLayer.rect(beatCount * tileSize, 0, tileSize, canvasHeight);
 
     if ((nowFrameCount % tempo) === 0) {
-        const drawTile = data.find(e => e[0] === beatCount);
-        if (!drawTile) {
+        const attackNotes = data
+            .filter(x => x[0] === beatCount)
+            .map(x => notes[x[1]]);
+        console.log(attackNotes);
+        if (!attackNotes || attackNotes.length === 0) {
             return;
         }
-        const note = notes[drawTile[1]];
-        if (!note) {
-            return;
-        }
-        synth.triggerAttackRelease(note, '8n');
+        console.log(attackNotes);
+        synth.triggerAttackRelease(attackNotes, '8n');
     }
 }
