@@ -3,6 +3,7 @@
 
 const tileSize = 20;
 const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
 
 let pressed = false;
 
@@ -50,10 +51,20 @@ const notes = [
 let canvasWidth;
 let canvasHeight;
 
+fetch("magical.json")
+    .then(response => response.json())
+    .then(midiData => {
+        for (var i = 0; i < midiData.tracks.length; i++) {
+            new Tone.Part((time, note) => {
+                midiSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+            }, midiData.tracks[i].notes).start();
+        }
+    });
+
 function setup() {
     const context = new AudioContext();
 
-    canvasWidth = windowWidth;
+    canvasWidth = 16 * tileSize;
     canvasHeight = notes.length * tileSize;
     createCanvas(canvasWidth, canvasHeight);
 
@@ -76,7 +87,6 @@ function setup() {
 }
 
 function draw() {
-
     if (!pressed && mouseIsPressed) {
         // synth.triggerAttackRelease("G#4");
     }
@@ -145,10 +155,13 @@ function _writeRect(x, y) {
 function _clickedStartButton() {
     frameCountAtStarted = frameCount;
     isStarted = true;
+
+    // _startMidi();
 }
 
 function _clickedEndButton() {
     isStarted = false;
+    Tone.Transport.stop();
 }
 
 function _play() {
@@ -156,9 +169,9 @@ function _play() {
         return;
     }
 
-    // frameCount --> 60 = 1 second
+    // frameCount --> 60 = 2 second (frameRate: 30)
     const nowFrameCount = frameCount - frameCountAtStarted;
-    const tempo = 10;
+    const tempo = 60 / 6;
 
     const beatCount = Math.floor(nowFrameCount / tempo); 
     metronomeLayer.clear();
@@ -170,11 +183,18 @@ function _play() {
         const attackNotes = data
             .filter(x => x[0] === beatCount)
             .map(x => notes[x[1]]);
-        console.log(attackNotes);
         if (!attackNotes || attackNotes.length === 0) {
             return;
         }
-        console.log(attackNotes);
         synth.triggerAttackRelease(attackNotes, '8n');
     }
+
+    if (beatCount * tileSize > canvasWidth) {
+        frameCountAtStarted = frameCount;
+    }
+}
+
+function _startMidi() {
+    Tone.Transport.bpm.value = 120;
+    Tone.Transport.start();
 }

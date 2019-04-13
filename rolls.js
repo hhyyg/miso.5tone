@@ -2,6 +2,7 @@
 /// <reference path="./types/p5/index.d.ts"/>
 var tileSize = 20;
 var synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+var midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
 var pressed = false;
 var layer;
 var metronomeLayer;
@@ -39,9 +40,18 @@ var notes = [
 ];
 var canvasWidth;
 var canvasHeight;
+fetch("magical.json")
+    .then(function (response) { return response.json(); })
+    .then(function (midiData) {
+    for (var i = 0; i < midiData.tracks.length; i++) {
+        new Tone.Part(function (time, note) {
+            midiSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
+        }, midiData.tracks[i].notes).start();
+    }
+});
 function setup() {
     var context = new AudioContext();
-    canvasWidth = windowWidth;
+    canvasWidth = 16 * tileSize;
     canvasHeight = notes.length * tileSize;
     createCanvas(canvasWidth, canvasHeight);
     // layer
@@ -103,17 +113,19 @@ function _writeRect(x, y) {
 function _clickedStartButton() {
     frameCountAtStarted = frameCount;
     isStarted = true;
+    // _startMidi();
 }
 function _clickedEndButton() {
     isStarted = false;
+    Tone.Transport.stop();
 }
 function _play() {
     if (!isStarted) {
         return;
     }
-    // frameCount --> 60 = 1 second
+    // frameCount --> 60 = 2 second (frameRate: 30)
     var nowFrameCount = frameCount - frameCountAtStarted;
-    var tempo = 10;
+    var tempo = 60 / 6;
     var beatCount = Math.floor(nowFrameCount / tempo);
     metronomeLayer.clear();
     metronomeLayer.noStroke();
@@ -123,11 +135,16 @@ function _play() {
         var attackNotes = data
             .filter(function (x) { return x[0] === beatCount; })
             .map(function (x) { return notes[x[1]]; });
-        console.log(attackNotes);
         if (!attackNotes || attackNotes.length === 0) {
             return;
         }
-        console.log(attackNotes);
         synth.triggerAttackRelease(attackNotes, '8n');
     }
+    if (beatCount * tileSize > canvasWidth) {
+        frameCountAtStarted = frameCount;
+    }
+}
+function _startMidi() {
+    Tone.Transport.bpm.value = 120;
+    Tone.Transport.start();
 }
