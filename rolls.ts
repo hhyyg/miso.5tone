@@ -2,8 +2,11 @@
 /// <reference path="./types/p5/index.d.ts"/>
 
 const tileSize = 20;
+const midiTicks = 480;
+const beatsPerMeasure = 4;
 const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
 const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
+let drawMelodyPart;
 
 let pressed = false;
 
@@ -64,7 +67,7 @@ fetch("magical.json")
 function setup() {
     const context = new AudioContext();
 
-    canvasWidth = 16 * tileSize;
+    canvasWidth = windowHeight;
     canvasHeight = notes.length * tileSize;
     createCanvas(canvasWidth, canvasHeight);
 
@@ -84,17 +87,13 @@ function setup() {
     endButton = createButton('end');
     endButton.position(100, 0);
     endButton.mousePressed(_clickedEndButton);
+
+    Tone.Transport.bpm.value = 170;
+
+    _drawMeasureLine();
 }
 
 function draw() {
-    if (!pressed && mouseIsPressed) {
-        // synth.triggerAttackRelease("G#4");
-    }
-
-    if (pressed && !mouseIsPressed) {
-        // synth.triggerRelease();
-    }
-
     if (mouseIsPressed) {
         pressed = true;
     } else {
@@ -104,9 +103,18 @@ function draw() {
     _drawTile();
     _play();
 
-
     image(layer, 0, 0, canvasWidth, canvasHeight);
     image(metronomeLayer, 0, 0, canvasWidth, canvasHeight);
+}
+
+function _drawMeasureLine() {
+
+    const measureCount = Math.floor(canvasWidth / tileSize / beatsPerMeasure);
+
+    for (let index = 0; index < measureCount; index++) {
+        const x = (index * tileSize * beatsPerMeasure);
+        layer.line(x, 0, x, canvasHeight);
+    }
 }
 
 function _drawTile() {
@@ -115,6 +123,9 @@ function _drawTile() {
 
     _writeRect(xPosition, yPosition);
 
+    if (xPosition < 0 || yPosition < 0) {
+        return;
+    }
     if (mouseIsPressed) {
         if (!data.find(e => e[0] === xPosition && e[1] === yPosition)) {
             data.push([xPosition, yPosition]);
@@ -156,7 +167,8 @@ function _clickedStartButton() {
     frameCountAtStarted = frameCount;
     isStarted = true;
 
-    // _startMidi();
+    _setupDrawMelody();
+    Tone.Transport.start();
 }
 
 function _clickedEndButton() {
@@ -169,32 +181,45 @@ function _play() {
         return;
     }
 
-    // frameCount --> 60 = 2 second (frameRate: 30)
-    const nowFrameCount = frameCount - frameCountAtStarted;
-    const tempo = 60 / 6;
+    const currentTicks = Tone.Transport.ticks;
 
-    const beatCount = Math.floor(nowFrameCount / tempo); 
+    const beatCount = Math.floor(currentTicks / Tone.Transport.PPQ);
+
     metronomeLayer.clear();
     metronomeLayer.noStroke();
     metronomeLayer.fill(140, 140, 140, 30);
-    metronomeLayer.rect(beatCount * tileSize, 0, tileSize, canvasHeight);
-
-    if ((nowFrameCount % tempo) === 0) {
-        const attackNotes = data
-            .filter(x => x[0] === beatCount)
-            .map(x => notes[x[1]]);
-        if (!attackNotes || attackNotes.length === 0) {
-            return;
-        }
-        synth.triggerAttackRelease(attackNotes, '8n');
-    }
+    metronomeLayer.rect((beatCount) * tileSize, 0, tileSize, canvasHeight);
 
     if (beatCount * tileSize > canvasWidth) {
         frameCountAtStarted = frameCount;
     }
 }
 
-function _startMidi() {
-    Tone.Transport.bpm.value = 120;
-    Tone.Transport.start();
+function _setupDrawMelody() {
+    if (!data || data.length === 0) {
+        return;
+    }
+
+    const drawMelody: any[][] = data
+        .map(x => {
+            const attackNote = notes[x[1]];
+            if (!attackNote) {
+                return null;
+            }
+            const measure = x[0] === 0 ? 0 : (Math.floor(x[0] / beatsPerMeasure));
+            if (measure < 0) {
+                return null;
+            }
+            const beat = x[0] - (measure * beatsPerMeasure);
+            const timing = `${measure}:${beat}`; // 1i == 1tick == 192PPQ;
+            return [timing, attackNote];
+        })
+        .filter(x => x !== null);
+
+    if (drawMelodyPart) {
+        drawMelodyPart.dispose();
+    }
+    drawMelodyPart = new Tone.Part((time, note) => {
+        synth.triggerAttackRelease(note, '8n', time);
+    }, drawMelody).start(0);
 }

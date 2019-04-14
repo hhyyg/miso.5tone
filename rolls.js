@@ -1,8 +1,11 @@
 /// <reference path="./types/p5/global.d.ts"/>
 /// <reference path="./types/p5/index.d.ts"/>
 var tileSize = 20;
+var midiTicks = 480;
+var beatsPerMeasure = 4;
 var synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
 var midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
+var drawMelodyPart;
 var pressed = false;
 var layer;
 var metronomeLayer;
@@ -51,7 +54,7 @@ fetch("magical.json")
 });
 function setup() {
     var context = new AudioContext();
-    canvasWidth = 16 * tileSize;
+    canvasWidth = windowHeight;
     canvasHeight = notes.length * tileSize;
     createCanvas(canvasWidth, canvasHeight);
     // layer
@@ -67,14 +70,10 @@ function setup() {
     endButton = createButton('end');
     endButton.position(100, 0);
     endButton.mousePressed(_clickedEndButton);
+    Tone.Transport.bpm.value = 170;
+    _drawMeasureLine();
 }
 function draw() {
-    if (!pressed && mouseIsPressed) {
-        // synth.triggerAttackRelease("G#4");
-    }
-    if (pressed && !mouseIsPressed) {
-        // synth.triggerRelease();
-    }
     if (mouseIsPressed) {
         pressed = true;
     }
@@ -86,10 +85,20 @@ function draw() {
     image(layer, 0, 0, canvasWidth, canvasHeight);
     image(metronomeLayer, 0, 0, canvasWidth, canvasHeight);
 }
+function _drawMeasureLine() {
+    var measureCount = Math.floor(canvasWidth / tileSize / beatsPerMeasure);
+    for (var index = 0; index < measureCount; index++) {
+        var x = (index * tileSize * beatsPerMeasure);
+        layer.line(x, 0, x, canvasHeight);
+    }
+}
 function _drawTile() {
     var xPosition = Math.floor(mouseX / tileSize);
     var yPosition = Math.floor(mouseY / tileSize);
     _writeRect(xPosition, yPosition);
+    if (xPosition < 0 || yPosition < 0) {
+        return;
+    }
     if (mouseIsPressed) {
         if (!data.find(function (e) { return e[0] === xPosition && e[1] === yPosition; })) {
             data.push([xPosition, yPosition]);
@@ -113,7 +122,8 @@ function _writeRect(x, y) {
 function _clickedStartButton() {
     frameCountAtStarted = frameCount;
     isStarted = true;
-    // _startMidi();
+    _setupDrawMelody();
+    Tone.Transport.start();
 }
 function _clickedEndButton() {
     isStarted = false;
@@ -123,28 +133,39 @@ function _play() {
     if (!isStarted) {
         return;
     }
-    // frameCount --> 60 = 2 second (frameRate: 30)
-    var nowFrameCount = frameCount - frameCountAtStarted;
-    var tempo = 60 / 6;
-    var beatCount = Math.floor(nowFrameCount / tempo);
+    var currentTicks = Tone.Transport.ticks;
+    var beatCount = Math.floor(currentTicks / Tone.Transport.PPQ);
     metronomeLayer.clear();
     metronomeLayer.noStroke();
     metronomeLayer.fill(140, 140, 140, 30);
-    metronomeLayer.rect(beatCount * tileSize, 0, tileSize, canvasHeight);
-    if ((nowFrameCount % tempo) === 0) {
-        var attackNotes = data
-            .filter(function (x) { return x[0] === beatCount; })
-            .map(function (x) { return notes[x[1]]; });
-        if (!attackNotes || attackNotes.length === 0) {
-            return;
-        }
-        synth.triggerAttackRelease(attackNotes, '8n');
-    }
+    metronomeLayer.rect((beatCount) * tileSize, 0, tileSize, canvasHeight);
     if (beatCount * tileSize > canvasWidth) {
         frameCountAtStarted = frameCount;
     }
 }
-function _startMidi() {
-    Tone.Transport.bpm.value = 120;
-    Tone.Transport.start();
+function _setupDrawMelody() {
+    if (!data || data.length === 0) {
+        return;
+    }
+    var drawMelody = data
+        .map(function (x) {
+        var attackNote = notes[x[1]];
+        if (!attackNote) {
+            return null;
+        }
+        var measure = x[0] === 0 ? 0 : (Math.floor(x[0] / beatsPerMeasure));
+        if (measure < 0) {
+            return null;
+        }
+        var beat = x[0] - (measure * beatsPerMeasure);
+        var timing = measure + ":" + beat; // 1i == 1tick == 192PPQ;
+        return [timing, attackNote];
+    })
+        .filter(function (x) { return x !== null; });
+    if (drawMelodyPart) {
+        drawMelodyPart.dispose();
+    }
+    drawMelodyPart = new Tone.Part(function (time, note) {
+        synth.triggerAttackRelease(note, '8n', time);
+    }, drawMelody).start(0);
 }
