@@ -3,7 +3,7 @@
 const synth = new Tone.PolySynth(5, Tone.Synth).toMaster();
 const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
 
-fetch("/libs/magical.json")
+fetch("../../libs/magical.json")
     .then(response => response.json())
     .then(parsed => {
         for (var i = 0; i < parsed.tracks.length; i++) {
