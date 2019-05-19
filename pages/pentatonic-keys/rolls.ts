@@ -1,5 +1,5 @@
-/// <reference path="./types/p5/global.d.ts"/>
-/// <reference path="./types/p5/index.d.ts"/>
+/// <reference path="../../types/p5/global.d.ts"/>
+/// <reference path="../../types/p5/index.d.ts"/>
 
 const tileSize = 20;
 const midiTicks = 480;
