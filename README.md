@@ -15,3 +15,9 @@
 
 - [First prototyping](https://gist.github.com/hhyyg/b4cd539a088d30e9db1bb180be1a3fc7)
 - Thanks: [魔法の伴奏 \| ずっしーの音楽教室](https://zussie-piano.com/mahou-no-bansou/)
+
+## Euclidean Rhythm
+
+[DEMO 💻📱](https://hhyyg.github.io/miso.5tone/pages/euclidean/index.html)
+
+![2019-05-25 17 25 23](https://user-images.githubusercontent.com/8636660/58366771-424d1e80-7f12-11e9-9811-754be90c0de0.gif)
