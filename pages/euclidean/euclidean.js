@@ -7,7 +7,7 @@ exports.__esModule = true;
  */
 function calc(n, k) {
     var _a, _b;
-    if (n < 0 || k < 0 || n <= k) {
+    if (n <= 0 || k <= 0 || n <= k) {
         throw Error();
     }
     var next = {

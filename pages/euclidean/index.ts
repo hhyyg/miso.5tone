@@ -21,11 +21,14 @@ function setup() {
 function draw() {
     clear();
 
-    let n = Math.floor(map(mouseX, 0, width, 1, 16));
-    let k = Math.floor(map(mouseY, 0, height, 1, 16));
+    let n = Math.floor(Math.abs(map(mouseX, 0, width, 1, 16)));
+    let k = Math.floor(Math.abs(map(mouseY, 0, height, 1, 16)));
+
+    n = n === 0 ? 1 : n;
+    k = k === 0 ? 1 : k;
 
     if (n === k) {
-        k += 1;
+        k += 1; 
     }
 
     const param = { n: Math.max(n, k), k: Math.min(n, k) };
@@ -33,7 +36,6 @@ function draw() {
 }
 
 function drawEuclideanRhythm(n: number, k: number) {
-
     const rhythm = calc(n, k);
 
     drawCircle();
@@ -41,6 +43,7 @@ function drawEuclideanRhythm(n: number, k: number) {
     drawK(rhythm, n);
 
     fill(0);
+
     text(`Ε(${n}, ${k})`, centerPoint.x, centerPoint.y);
     text(`[${rhythm}]`, centerPoint.x, centerPoint.y + 30);
 }

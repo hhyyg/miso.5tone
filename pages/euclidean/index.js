@@ -12,8 +12,10 @@ function setup() {
 }
 function draw() {
     clear();
-    var n = Math.floor(map(mouseX, 0, width, 1, 16));
-    var k = Math.floor(map(mouseY, 0, height, 1, 16));
+    var n = Math.floor(Math.abs(map(mouseX, 0, width, 1, 16)));
+    var k = Math.floor(Math.abs(map(mouseY, 0, height, 1, 16)));
+    n = n === 0 ? 1 : n;
+    k = k === 0 ? 1 : k;
     if (n === k) {
         k += 1;
     }
@@ -21,7 +23,9 @@ function draw() {
     drawEuclideanRhythm(param.n, param.k);
 }
 function drawEuclideanRhythm(n, k) {
+    console.log({ n: n, k: k });
     var rhythm = calc(n, k);
+    console.log(rhythm);
     drawCircle();
     drawN(n);
     drawK(rhythm, n);

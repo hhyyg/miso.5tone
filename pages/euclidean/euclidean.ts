@@ -9,7 +9,7 @@ type P = {
  */
 export function calc(n: number, k: number): number[] {
 
-    if (n < 0 || k < 0 || n <= k) {
+    if (n <= 0 || k <= 0 || n <= k) {
         throw Error();
     }
     
