@@ -37,9 +37,9 @@ function draw() {
     }
 
     const param = { n: Math.max(n, k), k: Math.min(n, k) };
-    console.log(param);
+    // console.log(param);
     currentRhythm = calc(param.n, param.k);
-    console.log(currentRhythm);
+    // console.log(currentRhythm);
     drawEuclideanRhythm(param.n, param.k, currentRhythm);
 }
 
