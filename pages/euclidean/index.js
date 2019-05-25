@@ -1,8 +1,13 @@
 /// <reference path="../../types/p5/global.d.ts"/>
 /// <reference path="../../types/p5/index.d.ts"/>
 var radius = 300;
+var synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+var rhythmPart;
 var centerPoint;
+var currentRhythm;
 function setup() {
+    var context = new AudioContext();
+    Tone.Transport.bpm.value = 160;
     createCanvas(windowWidth, windowHeight);
     stroke(0, 0, 0);
     fill(255, 255, 255, 0);
@@ -20,12 +25,29 @@ function draw() {
         k += 1;
     }
     var param = { n: Math.max(n, k), k: Math.min(n, k) };
-    drawEuclideanRhythm(param.n, param.k);
+    console.log(param);
+    currentRhythm = calc(param.n, param.k);
+    console.log(currentRhythm);
+    drawEuclideanRhythm(param.n, param.k, currentRhythm);
 }
-function drawEuclideanRhythm(n, k) {
-    console.log({ n: n, k: k });
-    var rhythm = calc(n, k);
-    console.log(rhythm);
+function mouseClicked() {
+    startMusic(currentRhythm);
+}
+function startMusic(rhythm) {
+    Tone.Transport.stop();
+    var data = rhythm.map(function (x, index) {
+        var timing = "0:" + index;
+        return [timing, x === 1 ? 'A3' : 'A2'];
+    });
+    if (rhythmPart) {
+        rhythmPart.dispose();
+    }
+    rhythmPart = new Tone.Part(function (time, note) {
+        synth.triggerAttackRelease(note, '8n', time);
+    }, data).start(0);
+    Tone.Transport.start();
+}
+function drawEuclideanRhythm(n, k, rhythm) {
     drawCircle();
     drawN(n);
     drawK(rhythm, n);

@@ -7,9 +7,14 @@ type P = {
 }
 
 const radius = 300;
+const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+let rhythmPart;
 let centerPoint:P;
+let currentRhythm: number[];
 
 function setup() {
+    const context = new AudioContext();
+    Tone.Transport.bpm.value = 160;
     createCanvas(windowWidth, windowHeight);
     stroke(0, 0, 0);
     fill(255, 255, 255, 0);
@@ -32,11 +37,34 @@ function draw() {
     }
 
     const param = { n: Math.max(n, k), k: Math.min(n, k) };
-    drawEuclideanRhythm(param.n, param.k);   
+    console.log(param);
+    currentRhythm = calc(param.n, param.k);
+    console.log(currentRhythm);
+    drawEuclideanRhythm(param.n, param.k, currentRhythm);
 }
 
-function drawEuclideanRhythm(n: number, k: number) {
-    const rhythm = calc(n, k);
+function mouseClicked() {
+    startMusic(currentRhythm);
+}
+
+function startMusic(rhythm: number[]) {
+    Tone.Transport.stop();
+
+    const data = rhythm.map((x, index) => {
+        const timing = `0:${index}`;
+        return [timing, x === 1 ? 'A3': 'A2'];
+    });
+
+    if (rhythmPart) {
+        rhythmPart.dispose();
+    }
+    rhythmPart = new Tone.Part((time, note) => {
+        synth.triggerAttackRelease(note, '8n', time);
+    }, data).start(0);
+    Tone.Transport.start();
+}
+
+function drawEuclideanRhythm(n: number, k: number, rhythm: number[]) {
 
     drawCircle();
     drawN(n);
