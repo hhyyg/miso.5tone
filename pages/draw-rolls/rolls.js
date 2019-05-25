@@ -1,20 +1,20 @@
 /// <reference path="../../types/p5/global.d.ts"/>
 /// <reference path="../../types/p5/index.d.ts"/>
-var tileSize = 20;
-var midiTicks = 480;
-var beatsPerMeasure = 4;
-var synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
-var midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
-var drawMelodyPart;
-var pressed = false;
-var layer;
-var metronomeLayer;
-var startButton;
-var endButton;
-var data = [];
-var isStarted = false;
-var frameCountAtStarted = 0;
-var notes = [
+const tileSize = 20;
+const midiTicks = 480;
+const beatsPerMeasure = 4;
+const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+const midiSynth = new Tone.PolySynth(16, Tone.Synth).toMaster();
+let drawMelodyPart;
+let pressed = false;
+let layer;
+let metronomeLayer;
+let startButton;
+let endButton;
+let data = [];
+let isStarted = false;
+let frameCountAtStarted = 0;
+const notes = [
     'A#5',
     'G#5',
     'F#5',
@@ -41,19 +41,19 @@ var notes = [
     'D#1',
     'C#1',
 ];
-var canvasWidth;
-var canvasHeight;
+let canvasWidth;
+let canvasHeight;
 fetch("magical.json")
-    .then(function (response) { return response.json(); })
-    .then(function (midiData) {
+    .then(response => response.json())
+    .then(midiData => {
     for (var i = 0; i < midiData.tracks.length; i++) {
-        new Tone.Part(function (time, note) {
+        new Tone.Part((time, note) => {
             midiSynth.triggerAttackRelease(note.name, note.duration, time, note.velocity);
         }, midiData.tracks[i].notes).start();
     }
 });
 function setup() {
-    var context = new AudioContext();
+    const context = new AudioContext();
     canvasWidth = windowHeight;
     canvasHeight = notes.length * tileSize;
     createCanvas(canvasWidth, canvasHeight);
@@ -86,21 +86,21 @@ function draw() {
     image(metronomeLayer, 0, 0, canvasWidth, canvasHeight);
 }
 function _drawMeasureLine() {
-    var measureCount = Math.floor(canvasWidth / tileSize / beatsPerMeasure);
-    for (var index = 0; index < measureCount; index++) {
-        var x = (index * tileSize * beatsPerMeasure);
+    const measureCount = Math.floor(canvasWidth / tileSize / beatsPerMeasure);
+    for (let index = 0; index < measureCount; index++) {
+        const x = (index * tileSize * beatsPerMeasure);
         layer.line(x, 0, x, canvasHeight);
     }
 }
 function _drawTile() {
-    var xPosition = Math.floor(mouseX / tileSize);
-    var yPosition = Math.floor(mouseY / tileSize);
+    const xPosition = Math.floor(mouseX / tileSize);
+    const yPosition = Math.floor(mouseY / tileSize);
     _writeRect(xPosition, yPosition);
     if (xPosition < 0 || yPosition < 0) {
         return;
     }
     if (mouseIsPressed) {
-        if (!data.find(function (e) { return e[0] === xPosition && e[1] === yPosition; })) {
+        if (!data.find(e => e[0] === xPosition && e[1] === yPosition)) {
             data.push([xPosition, yPosition]);
         }
     }
@@ -133,8 +133,8 @@ function _play() {
     if (!isStarted) {
         return;
     }
-    var currentTicks = Tone.Transport.ticks;
-    var beatCount = Math.floor(currentTicks / Tone.Transport.PPQ);
+    const currentTicks = Tone.Transport.ticks;
+    const beatCount = Math.floor(currentTicks / Tone.Transport.PPQ);
     metronomeLayer.clear();
     metronomeLayer.noStroke();
     metronomeLayer.fill(140, 140, 140, 30);
@@ -147,25 +147,25 @@ function _setupDrawMelody() {
     if (!data || data.length === 0) {
         return;
     }
-    var drawMelody = data
-        .map(function (x) {
-        var attackNote = notes[x[1]];
+    const drawMelody = data
+        .map(x => {
+        const attackNote = notes[x[1]];
         if (!attackNote) {
             return null;
         }
-        var measure = x[0] === 0 ? 0 : (Math.floor(x[0] / beatsPerMeasure));
+        const measure = x[0] === 0 ? 0 : (Math.floor(x[0] / beatsPerMeasure));
         if (measure < 0) {
             return null;
         }
-        var beat = x[0] - (measure * beatsPerMeasure);
-        var timing = measure + ":" + beat; // 1i == 1tick == 192PPQ;
+        const beat = x[0] - (measure * beatsPerMeasure);
+        const timing = `${measure}:${beat}`; // 1i == 1tick == 192PPQ;
         return [timing, attackNote];
     })
-        .filter(function (x) { return x !== null; });
+        .filter(x => x !== null);
     if (drawMelodyPart) {
         drawMelodyPart.dispose();
     }
-    drawMelodyPart = new Tone.Part(function (time, note) {
+    drawMelodyPart = new Tone.Part((time, note) => {
         synth.triggerAttackRelease(note, '8n', time);
     }, drawMelody).start(0);
 }

@@ -1,11 +1,11 @@
 /// <reference path="../../types/p5/global.d.ts"/>
 /// <reference path="../../types/p5/index.d.ts"/>
-var n = 8;
-var k = 3;
-var e = [1, 0, 0, 1, 0, 0, 1, 0];
-var angleStep = 360 / n;
-var radius = 300;
-var v1;
+const n = 8;
+const k = 3;
+const e = [1, 0, 0, 1, 0, 0, 1, 0];
+const angleStep = 360 / n;
+const radius = 300;
+let v1;
 function setup() {
     createCanvas(windowWidth, windowHeight);
     stroke(0, 0, 0);
@@ -24,10 +24,10 @@ function drawCircle() {
 }
 function drawN(n) {
     beginShape();
-    var cursor = 0;
-    for (var angle = -90; angle < 270; angle += angleStep) {
-        var vx = v1.x + cos(radians(angle)) * radius;
-        var vy = v1.y + sin(radians(angle)) * radius;
+    let cursor = 0;
+    for (let angle = -90; angle < 270; angle += angleStep) {
+        const vx = v1.x + cos(radians(angle)) * radius;
+        const vy = v1.y + sin(radians(angle)) * radius;
         vertex(vx, vy);
         ellipse(vx, vy, 20);
         text(cursor.toString(), vx, vy);
@@ -37,11 +37,11 @@ function drawN(n) {
 }
 function drawK(e) {
     beginShape();
-    var cursor = 0;
-    for (var angle = -90; angle <= 270; angle += angleStep) {
+    let cursor = 0;
+    for (let angle = -90; angle <= 270; angle += angleStep) {
         if (e[cursor] === 1) {
-            var vx = v1.x + cos(radians(angle)) * radius;
-            var vy = v1.y + sin(radians(angle)) * radius;
+            const vx = v1.x + cos(radians(angle)) * radius;
+            const vy = v1.y + sin(radians(angle)) * radius;
             vertex(vx, vy);
         }
         cursor += 1;
