@@ -7,7 +7,6 @@ type P = {
 }
 
 declare var Tone: any;
-declare var calc: any;
 export {};
 
 const radius = 300;
@@ -42,7 +41,7 @@ function draw() {
 
     const param = { n: Math.max(n, k), k: Math.min(n, k) };
     // console.log(param);
-    currentRhythm = calc(param.n, param.k);
+    currentRhythm = getEuclideanRhythm(param.n, param.k);
     // console.log(currentRhythm);
     drawEuclideanRhythm(param.n, param.k, currentRhythm);
 }
@@ -76,8 +75,14 @@ function drawEuclideanRhythm(n: number, k: number, rhythm: number[]) {
 
     fill(0);
 
-    text(`Ε(${n}, ${k})`, centerPoint.x, centerPoint.y);
-    text(`[${rhythm}]`, centerPoint.x, centerPoint.y + 30);
+    const intervals = getIntervalVectors(rhythm);
+    const textRowHeight = 30;
+    let rowNumber = 0;
+    text(`Ε(${k}, ${n})`, 0, textRowHeight * ++rowNumber);
+    ++rowNumber;
+    text(`[${rhythm}]`, 0, textRowHeight * ++rowNumber);
+    text(`(${intervals.join('')})`, 0, textRowHeight * ++rowNumber);
+    text(`Euclidean Strings: ${isEuclideanStrings(intervals) ? 'Yes': 'No'}`, 0, textRowHeight * ++rowNumber);
 }
 
 function drawCircle() {
@@ -96,7 +101,9 @@ function drawN(n: number) {
         // vertex(vx, vy);
         ellipse(vx, vy, 20);
 
-        text(cursor.toString(), vx, vy);
+        fill(100);
+        text(cursor.toString(), vx, vy + 25);
+        fill(255);
         cursor += 1;
     }
 

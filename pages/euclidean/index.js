@@ -28,7 +28,7 @@ function draw() {
     }
     var param = { n: Math.max(n, k), k: Math.min(n, k) };
     // console.log(param);
-    currentRhythm = calc(param.n, param.k);
+    currentRhythm = getEuclideanRhythm(param.n, param.k);
     // console.log(currentRhythm);
     drawEuclideanRhythm(param.n, param.k, currentRhythm);
 }
@@ -54,8 +54,13 @@ function drawEuclideanRhythm(n, k, rhythm) {
     drawN(n);
     drawK(rhythm, n);
     fill(0);
-    text("\u0395(" + n + ", " + k + ")", centerPoint.x, centerPoint.y);
-    text("[" + rhythm + "]", centerPoint.x, centerPoint.y + 30);
+    var intervals = getIntervalVectors(rhythm);
+    var textRowHeight = 30;
+    var rowNumber = 0;
+    text("\u0395(" + n + ", " + k + ")", 0, textRowHeight * ++rowNumber);
+    text("[" + rhythm + "]", 0, textRowHeight * ++rowNumber);
+    text("(" + intervals.join('') + ")", 0, textRowHeight * ++rowNumber);
+    text("Euclidean Strings: " + (isEuclideanStrings(intervals) ? 'Yes' : 'No'), 0, textRowHeight * ++rowNumber);
 }
 function drawCircle() {
     fill(255, 255);
@@ -70,7 +75,9 @@ function drawN(n) {
         var vy = centerPoint.y + sin(radians(angle)) * radius;
         // vertex(vx, vy);
         ellipse(vx, vy, 20);
-        text(cursor.toString(), vx, vy);
+        fill(100);
+        text(cursor.toString(), vx, vy + 25);
+        fill(255);
         cursor += 1;
     }
     // endShape(CLOSE);

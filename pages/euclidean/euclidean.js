@@ -5,10 +5,11 @@ exports.__esModule = true;
  * @param n
  * @param k
  */
-function calc(n, k) {
+function getEuclideanRhythm(n, k) {
     var _a, _b;
     if (n <= 0 || k <= 0 || n <= k) {
-        throw Error();
+        throw Error("invalid arguments");
+        ;
     }
     var next = {
         a: Array(k).fill(1).map(function (x) { return [x]; }),
@@ -23,7 +24,7 @@ function calc(n, k) {
     var result = (_a = Array.prototype).concat.apply(_a, next.a).concat((_b = Array.prototype).concat.apply(_b, next.b));
     return result;
 }
-exports.calc = calc;
+exports.getEuclideanRhythm = getEuclideanRhythm;
 function process(p) {
     var nextA = p.a
         .slice(0, Math.min(p.a.length, p.b.length))
@@ -47,3 +48,42 @@ function log(p) {
 function toString(value) {
     return "[" + value + "]";
 }
+function getIntervalVectors(euclideanRhythm) {
+    var results = [];
+    var currentCount = 0;
+    euclideanRhythm.forEach(function (value, index) {
+        if (index !== 0 && value === 1) {
+            results.push(currentCount);
+            currentCount = 0;
+        }
+        if (index === (euclideanRhythm.length - 1)) {
+            results.push(currentCount + 1);
+        }
+        currentCount += 1;
+    });
+    return results;
+}
+exports.getIntervalVectors = getIntervalVectors;
+function isEuclideanStrings(values) {
+    if (values.some(function (x) { return x <= 0; })) {
+        throw Error("invalid arguments");
+    }
+    if (values.length === 1) {
+        return true;
+    }
+    var other = values.map(function (value, index) {
+        return index === 0 ? value + 1 :
+            index === (values.length - 1) ? value - 1 :
+                value;
+    });
+    for (var index = 0; index < (other.length - 1); index++) {
+        var rightRotateValues = other.slice(1, other.length).concat([
+            other[0]
+        ]);
+        if (values.join() === rightRotateValues.join()) {
+            return true;
+        }
+    }
+    return false;
+}
+exports.isEuclideanStrings = isEuclideanStrings;

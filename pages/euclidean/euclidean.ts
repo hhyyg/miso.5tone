@@ -7,10 +7,10 @@ type P = {
  * @param n 
  * @param k 
  */
-export function calc(n: number, k: number): number[] {
+export function getEuclideanRhythm(n: number, k: number): number[] {
 
     if (n <= 0 || k <= 0 || n <= k) {
-        throw Error();
+        throw Error(`invalid arguments`);;
     }
     
     let next:P = {
@@ -56,4 +56,52 @@ function log(p: P) {
 
 function toString(value: any[]) {
     return `[${value}]`;
+}
+
+export function getIntervalVectors(euclideanRhythm: number[]): number[] {
+
+    let results: number[] = [];
+    let currentCount = 0;
+    euclideanRhythm.forEach((value, index) => {
+        if (index !== 0 && value === 1) {
+            results.push(currentCount);
+            currentCount = 0;
+        }
+        if (index === (euclideanRhythm.length - 1)) {
+            results.push(currentCount + 1);
+        }
+        currentCount += 1;
+    });
+
+    return results;
+}
+
+export function isEuclideanStrings(values: number[]): boolean {
+
+    if (values.some(x => x <= 0)) {
+        throw Error(`invalid arguments`);
+    }
+
+    if (values.length === 1) {
+        return true;
+    }
+
+    const other = values.map((value, index) => {
+        return index === 0 ? value + 1 :
+            index === (values.length - 1) ? value - 1 :
+            value;
+    });
+
+    for (let index = 0; index < (other.length - 1); index++) {
+        const rightRotateValues = [
+            ...other.slice(1, other.length),
+            other[0]
+        ];
+
+        if (values.join() === rightRotateValues.join()) {
+            return true;
+        }
+    }
+
+    return false;
 }
