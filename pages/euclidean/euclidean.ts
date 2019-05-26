@@ -105,3 +105,42 @@ export function isEuclideanStrings(values: number[]): boolean {
 
     return false;
 }
+
+type EuclideanInfo = {
+    n: number,
+    k: number,
+    rhythm: number[],
+    intervals: number[],
+    isEuclideanStrings: boolean,
+};
+
+export function getManyPatterns(max: number) {
+
+    const results: EuclideanInfo[] = [];
+    const format = (element: EuclideanInfo) => `"E(${element.k}, ${element.n})","[${element.rhythm}]",${element.intervals.join('')},${element.isEuclideanStrings}`;
+
+    for (let i = 0; i <= max; i++) {
+        for (let j = 0; j <= max; j++) {
+
+            if (i <= 0 || j <= 0 || (i === j) || j < i) {
+                console.log('skip');
+                continue;
+            }
+
+            const rhythm = getEuclideanRhythm(Math.max(i, j), Math.min(i, j));
+            const intervals = getIntervalVectors(rhythm);
+
+            results.push({ 
+                n: Math.max(i, j),
+                k: Math.min(i, j), 
+                rhythm, 
+                intervals, 
+                isEuclideanStrings: isEuclideanStrings(intervals) 
+            });
+        }
+    }
+    results.forEach(element => {
+        console.log(format(element));
+    });
+    return results;
+}

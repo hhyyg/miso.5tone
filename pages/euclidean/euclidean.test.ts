@@ -1,4 +1,4 @@
-import { getEuclideanRhythm, getIntervalVectors, isEuclideanStrings } from "./euclidean";
+import { getEuclideanRhythm, getIntervalVectors, isEuclideanStrings, getManyPatterns} from "./euclidean";
 
 test('calc', () => {
     expect(getEuclideanRhythm(13, 5)).toStrictEqual([1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 1, 0, 0]);
@@ -43,4 +43,8 @@ test('isEuclideanStrings', () => {
     expect(isEuclideanStrings([3, 3])).toBe(false);
     expect(isEuclideanStrings([4, 4])).toBe(false);
     expect(isEuclideanStrings([19, 19])).toBe(false);
+});
+
+test('isEuclideanStrings', () => {
+    getManyPatterns(30);
 });

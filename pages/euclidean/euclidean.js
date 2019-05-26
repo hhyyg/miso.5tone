@@ -87,3 +87,29 @@ function isEuclideanStrings(values) {
     return false;
 }
 exports.isEuclideanStrings = isEuclideanStrings;
+function getManyPatterns(max) {
+    var results = [];
+    var format = function (element) { return "\"E(" + element.k + ", " + element.n + ")\",\"[" + element.rhythm + "]\"," + element.intervals.join('') + "," + element.isEuclideanStrings; };
+    for (var i = 0; i <= max; i++) {
+        for (var j = 0; j <= max; j++) {
+            if (i <= 0 || j <= 0 || (i === j) || j < i) {
+                console.log('skip');
+                continue;
+            }
+            var rhythm = getEuclideanRhythm(Math.max(i, j), Math.min(i, j));
+            var intervals = getIntervalVectors(rhythm);
+            results.push({
+                n: Math.max(i, j),
+                k: Math.min(i, j),
+                rhythm: rhythm,
+                intervals: intervals,
+                isEuclideanStrings: isEuclideanStrings(intervals)
+            });
+        }
+    }
+    results.forEach(function (element) {
+        console.log(format(element));
+    });
+    return results;
+}
+exports.getManyPatterns = getManyPatterns;

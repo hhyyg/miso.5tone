@@ -57,7 +57,8 @@ function drawEuclideanRhythm(n, k, rhythm) {
     var intervals = getIntervalVectors(rhythm);
     var textRowHeight = 30;
     var rowNumber = 0;
-    text("\u0395(" + n + ", " + k + ")", 0, textRowHeight * ++rowNumber);
+    text("\u0395(" + k + ", " + n + ")", 0, textRowHeight * ++rowNumber);
+    ++rowNumber;
     text("[" + rhythm + "]", 0, textRowHeight * ++rowNumber);
     text("(" + intervals.join('') + ")", 0, textRowHeight * ++rowNumber);
     text("Euclidean Strings: " + (isEuclideanStrings(intervals) ? 'Yes' : 'No'), 0, textRowHeight * ++rowNumber);
