@@ -1,13 +1,17 @@
-/// <reference path="../../types/p5/global.d.ts"/>
-/// <reference path="../../types/p5/index.d.ts"/>
+/// <reference path="../../node_modules/@types/p5/index.d.ts"/>
+/// <reference path="../../node_modules/@types/p5/global.d.ts"/>
 
 type P = {
     x: number,
     y: number,
 }
 
+declare var Tone: any;
+declare var calc: any;
+export {};
+
 const radius = 300;
-const synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+const synth = new Tone.Synth().toMaster(); 
 let rhythmPart;
 let centerPoint:P;
 let currentRhythm: number[];

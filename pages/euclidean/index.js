@@ -1,7 +1,9 @@
-/// <reference path="../../types/p5/global.d.ts"/>
-/// <reference path="../../types/p5/index.d.ts"/>
+"use strict";
+/// <reference path="../../node_modules/@types/p5/index.d.ts"/>
+/// <reference path="../../node_modules/@types/p5/global.d.ts"/>
+exports.__esModule = true;
 var radius = 300;
-var synth = new Tone.PolySynth(8, Tone.Synth).toMaster();
+var synth = new Tone.Synth().toMaster();
 var rhythmPart;
 var centerPoint;
 var currentRhythm;
