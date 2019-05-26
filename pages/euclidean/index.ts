@@ -82,7 +82,8 @@ function drawEuclideanRhythm(n: number, k: number, rhythm: number[]) {
     ++rowNumber;
     text(`[${rhythm}]`, 0, textRowHeight * ++rowNumber);
     text(`(${intervals.join('')})`, 0, textRowHeight * ++rowNumber);
-    text(`Euclidean Strings: ${isEuclideanStrings(intervals) ? 'Yes': 'No'}`, 0, textRowHeight * ++rowNumber);
+    text(`Euclidean strings: ${isEuclideanStrings(intervals) ? 'Yes': 'No'}`, 0, textRowHeight * ++rowNumber);
+    text(`reverse Euclidean strings: ${isEuclideanStrings(intervals.slice().reverse()) ? 'Yes': 'No'}`, 0, textRowHeight * ++rowNumber);
 }
 
 function drawCircle() {
