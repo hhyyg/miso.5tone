@@ -38,4 +38,9 @@ test('isEuclideanStrings', () => {
     expect(isEuclideanStrings([2, 1, 2, 2, 1, 2, 2])).toBe(false);
     expect(isEuclideanStrings([2, 1, 2, 2, 2, 1, 2, 2, 2])).toBe(false);
     expect(isEuclideanStrings([2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2])).toBe(false);
+
+    // need confirm
+    expect(isEuclideanStrings([3, 3])).toBe(false);
+    expect(isEuclideanStrings([4, 4])).toBe(false);
+    expect(isEuclideanStrings([19, 19])).toBe(false);
 });
