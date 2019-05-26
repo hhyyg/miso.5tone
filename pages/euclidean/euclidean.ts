@@ -16,7 +16,7 @@ export function getEuclideanRhythm(n: number, k: number): number[] {
     let next:P = {
         a: Array(k).fill(1).map(x => [x]),
         b: Array(n - k).fill(0).map(x => [x]),
-        r: Array(n - k).length
+        r: -1 // If the remainder is 1, perform processing at least once
     };
     log(next);
 

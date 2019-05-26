@@ -14,7 +14,7 @@ function getEuclideanRhythm(n, k) {
     var next = {
         a: Array(k).fill(1).map(function (x) { return [x]; }),
         b: Array(n - k).fill(0).map(function (x) { return [x]; }),
-        r: Array(n - k).length
+        r: -1 // If the remainder is 1, perform processing at least once
     };
     log(next);
     while (next.r !== 1 && next.r !== 0) {

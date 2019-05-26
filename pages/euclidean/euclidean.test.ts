@@ -5,13 +5,18 @@ test('calc', () => {
     expect(getEuclideanRhythm(7, 3)).toStrictEqual([1, 0, 1, 0, 1, 0, 0]);
     expect(getEuclideanRhythm(8, 3)).toStrictEqual([1, 0, 0, 1, 0, 0, 1, 0]);
 
-    expect(getEuclideanRhythm(3, 2)).toStrictEqual([1, 1, 0]);
     expect(getEuclideanRhythm(7, 4)).toStrictEqual([1, 0, 1, 0, 1, 0, 1]);
-    expect(getEuclideanRhythm(7, 6)).toStrictEqual([1, 1, 1, 1, 1, 1, 0]);
 
     expect(getEuclideanRhythm(4, 1)).toStrictEqual([1, 0, 0, 0]);
     expect(getEuclideanRhythm(3, 1)).toStrictEqual([1, 0, 0]);
     expect(getEuclideanRhythm(6, 2)).toStrictEqual([1, 0, 0, 1, 0, 0]);
+
+    // n = k + 1
+    expect(getEuclideanRhythm(2, 1)).toStrictEqual([1, 0]);
+    expect(getEuclideanRhythm(3, 2)).toStrictEqual([1, 0, 1]);
+    expect(getEuclideanRhythm(4, 3)).toStrictEqual([1, 0, 1, 1]);
+    expect(getEuclideanRhythm(5, 4)).toStrictEqual([1, 0, 1, 1, 1]);
+    expect(getEuclideanRhythm(7, 6)).toStrictEqual([1, 0, 1, 1, 1, 1, 1]);
 });
 
 test('getIntervalVectors', () => {
@@ -45,6 +50,6 @@ test('isEuclideanStrings', () => {
     expect(isEuclideanStrings([19, 19])).toBe(false);
 });
 
-test('isEuclideanStrings', () => {
-    getManyPatterns(30);
-});
+// test('isEuclideanStrings', () => {
+//     getManyPatterns(30);
+// });
