@@ -33,6 +33,8 @@ test('isEuclideanStrings', () => {
     expect(isEuclideanStrings([8])).toBe(true);
 
     expect(isEuclideanStrings([2, 3])).toBe(true);
+    expect(isEuclideanStrings([2, 3, 3])).toBe(true);
+    expect(isEuclideanStrings([2, 3, 3, 3, 3, 3])).toBe(true);
     expect(isEuclideanStrings([2, 2, 3])).toBe(true);
     expect(isEuclideanStrings([2, 2, 2, 3])).toBe(true);
     expect(isEuclideanStrings([2, 2, 2, 2, 3])).toBe(true);

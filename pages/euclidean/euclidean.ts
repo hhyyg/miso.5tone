@@ -94,8 +94,8 @@ export function isEuclideanStrings(values: number[]): boolean {
 
     for (let index = 0; index < (other.length - 1); index++) {
         const rightRotateValues = [
-            ...other.slice(1, other.length),
-            other[0]
+            ...other.slice(index + 1, other.length),
+            ...other.slice(0, index + 1)
         ];
 
         if (values.join() === rightRotateValues.join()) {

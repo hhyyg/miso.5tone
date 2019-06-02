@@ -77,9 +77,7 @@ function isEuclideanStrings(values) {
                 value;
     });
     for (var index = 0; index < (other.length - 1); index++) {
-        var rightRotateValues = other.slice(1, other.length).concat([
-            other[0]
-        ]);
+        var rightRotateValues = other.slice(index + 1, other.length).concat(other.slice(0, index + 1));
         if (values.join() === rightRotateValues.join()) {
             return true;
         }
